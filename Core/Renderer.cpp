@@ -28,4 +28,6 @@ GameEngine::Renderer::Renderer(RendererInformation rendererInformation)
 
 	glViewport(0, 0, rendererInformation.width, rendererInformation.height);
 	glfwSetFramebufferSizeCallback(m_window, FramebufferSizeCallback);
+
+	glEnable(GL_DEPTH);
 }

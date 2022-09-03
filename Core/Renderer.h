@@ -26,5 +26,7 @@ namespace GameEngine {
 		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
 			glViewport(0, 0, width, height);
 		}
+
+		GLFWwindow* GetWindow() { return m_window; }
 	};
 }
