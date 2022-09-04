@@ -18,6 +18,8 @@ namespace GameEngine {
 
 		std::vector<std::function<void()>> m_GameLoops;
 		std::vector<UILayer*> m_Layers;
+		
+		UILayer* m_SceneView = new SceneView();
 	public:
 		Engine(Renderer* renderer);
 

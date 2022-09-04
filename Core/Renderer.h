@@ -3,6 +3,7 @@
 #include <xstring>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 namespace GameEngine {
 	struct RendererInformation {
@@ -20,11 +21,25 @@ namespace GameEngine {
 		GLFWwindow* m_window;
 
 		RendererInformation m_RendererInformation;
+
+		unsigned int m_framebuffer = 0;
+		unsigned int m_textureID = 0;
 	public:
+		glm::vec2 RenderSize;
 		Renderer(RendererInformation rendererInformation);
 
-		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+		void CreateFramebuffer();
+		void Bind();
+		void Unbind();
+		unsigned int GetTexture() { return m_textureID; }
+
+		void Resize(int width, int height) {
+			if (RenderSize.x == width && RenderSize.y == height) return;
 			glViewport(0, 0, width, height);
+			RenderSize.x = width;
+			RenderSize.y = height;
+
+			CreateFramebuffer();
 		}
 
 		GLFWwindow* GetWindow() { return m_window; }
