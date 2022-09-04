@@ -1,38 +1,85 @@
+#include <glad/glad.h>
 #include "Engine.h"
+#include "Debug.h"
+
+GameEngine::Engine::Engine(Renderer* renderer) : m_Renderer(renderer) {
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.WantCaptureMouse = true;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForOpenGL(m_Renderer->GetWindow(), true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+}
+
+void GameEngine::Engine::AddLayer(UILayer* layer) {
+	m_Layers.push_back(std::move(layer));
+}
 
 void GameEngine::Engine::UpdateImGui()
 {
-
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	if (m_showImGuiDemo) ImGui::ShowDemoWindow(&m_showImGuiDemo);
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
+		ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_MenuBar;
 
-	ImGui::BeginMainMenuBar();
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::Begin("InvisibleWindow", nullptr, windowFlags);
+	ImGui::PopStyleVar(3);
+
+	ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
+
+	ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+	ImGui::BeginMenuBar();
 	if (ImGui::BeginMenu("Windows")) {
-		ImGui::MenuItem("Show Engine");
-
+		for (auto& layer : m_Layers) {
+			if (ImGui::MenuItem(layer->title.c_str(), NULL, layer->active)) layer->active = !layer->active;
+		}
 		ImGui::EndMenu();
 	}
-#ifdef _DEBUG
-	if (ImGui::BeginMenu("Engine Development"))
-	{
-		ImGui::MenuItem("Show ImGui Examples/Demos", nullptr, &m_showImGuiDemo);
+	ImGui::EndMenuBar();
+	ImGui::End();
 
-		ImGui::EndMenu();
+	for (auto& layer : m_Layers) {
+		layer->_Update();
 	}
-#endif
-	ImGui::EndMainMenuBar();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	ImGui::UpdatePlatformWindows();
-	ImGui::RenderPlatformWindowsDefault();
+
+	ImGuiIO& io = ImGui::GetIO();
+
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		GLFWwindow* backup_current_context = glfwGetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(backup_current_context);
+	}
 }
 
 void GameEngine::Engine::StartGameLoop()
 {
+	for (auto layer : m_Layers) {
+		layer->Start();
+	}
+
 	while (!glfwWindowShouldClose(m_Renderer->GetWindow())) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glfwPollEvents();
