@@ -6,6 +6,8 @@
 
 using namespace GameEngine;
 
+Renderer renderer(RendererInformation(800, 600, "Game Engine"));
+
 class Test1 : public UILayer {
 	void Start() override {
 		title = "Something else";
@@ -24,11 +26,7 @@ void Loop() {
 
 int main()
 {
-	Timer timer;
-	Renderer renderer(RendererInformation(800, 600, "Game Engine"));
 	Engine engine(&renderer);
-	float time = timer.ElapsedMillis();
-	DebugLog("Init took " << time << "ms");
 
 	UILayer* test1 = new Test1();
 	engine.AddLayer(test1);

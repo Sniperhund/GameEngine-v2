@@ -24,7 +24,12 @@ namespace GameEngine {
 
 		unsigned int m_framebuffer = 0;
 		unsigned int m_textureID = 0;
+
+		float m_LastFrame;
 	public:
+		float RenderTimeInMs;
+		float DeltaTime;
+
 		glm::vec2 RenderSize;
 		Renderer(RendererInformation rendererInformation);
 
@@ -40,6 +45,13 @@ namespace GameEngine {
 			RenderSize.y = height;
 
 			CreateFramebuffer();
+		}
+
+		void UpdateDeltaTime()
+		{
+			float currentFrame = static_cast<float>(glfwGetTime());
+			DeltaTime = currentFrame - m_LastFrame;
+			m_LastFrame = currentFrame;
 		}
 
 		GLFWwindow* GetWindow() { return m_window; }

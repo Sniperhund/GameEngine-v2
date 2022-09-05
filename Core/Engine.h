@@ -20,6 +20,7 @@ namespace GameEngine {
 		std::vector<UILayer*> m_Layers;
 		
 		UILayer* m_SceneView = new SceneView();
+		UILayer* m_PerformanceView = new PerformanceView();
 	public:
 		Engine(Renderer* renderer);
 
@@ -28,7 +29,6 @@ namespace GameEngine {
 		void AddLayer(UILayer* layer);
 		void AddGameLoopCallback(std::function<void()> callback) { m_GameLoops.push_back(std::move(callback)); }
 		void StartGameLoop();
-
 	private:
 		bool m_showImGuiDemo;
 	};

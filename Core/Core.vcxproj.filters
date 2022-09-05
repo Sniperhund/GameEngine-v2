@@ -16,6 +16,9 @@
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{ad5b7dbf-296e-43ec-bd25-42c8d0c73933}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{98d75d31-c376-41d4-b868-617be1087012}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -32,6 +35,18 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

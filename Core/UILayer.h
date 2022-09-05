@@ -1,7 +1,9 @@
 #pragma once
+#include <format>
+
 #include "Renderer.h"
 
-#include <xstring>
+#include <format>
 
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -11,7 +13,7 @@ namespace GameEngine {
 	protected:
 		bool removePadding = false;
 		ImGuiWindowFlags windowFlags;
-		Renderer* _Renderer;
+		Renderer* m_Renderer;
 	public:
 		void _Update() {
 			if (!active) return;
@@ -29,7 +31,7 @@ namespace GameEngine {
 		}
 
 		void _Start(Renderer* renderer) {
-			_Renderer = renderer;
+			m_Renderer = renderer;
 			Start();
 		}
 
@@ -52,9 +54,32 @@ namespace GameEngine {
 			if (!active) return;
 
 			ImVec2 view = ImGui::GetContentRegionAvail();
-			_Renderer->Resize(view.x, view.y);
-			ImGui::Image(reinterpret_cast<void*>(_Renderer->GetTexture()),
-				ImVec2{ _Renderer->RenderSize.x, _Renderer->RenderSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			m_Renderer->Resize(view.x, view.y);
+			ImGui::Image(reinterpret_cast<void*>(m_Renderer->GetTexture()),
+				ImVec2{ m_Renderer->RenderSize.x, m_Renderer->RenderSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		}
+	};
+
+	class PerformanceView : public UILayer {
+		int i = 0;
+		float lastRenderTime = 0;
+
+		void Start() override {
+			title = "PerformanceView";
+		}
+
+		void Update() override {
+			if (!active) return;
+
+			if (i == 5)
+			{
+				lastRenderTime = m_Renderer->RenderTimeInMs;
+				ImGui::Text(std::format("It took {} ms to render", round(lastRenderTime * 100) / 100).c_str());
+				i = 0;
+				return;
+			}
+			ImGui::Text(std::format("It took {} ms to render", round(lastRenderTime * 100) / 100).c_str());
+			i++;
 		}
 	};
 }
