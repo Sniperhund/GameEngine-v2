@@ -2,7 +2,6 @@
 #include "Engine.h"
 #include "Debug.h"
 #include "EditorCamera.h"
-#include "Model.h"
 #include "Timer.h"
 
 GameEngine::Engine::Engine(Renderer* renderer) : m_Renderer(renderer) {
@@ -82,18 +81,18 @@ void GameEngine::Engine::UpdateImGui()
 
 void GameEngine::Engine::StartGameLoop()
 {
-	for (auto layer : m_Layers) {
-		layer->_Start(m_Renderer);
-	}
+	Object* object = new Object();
+	object->SetInfo("Shader", "cube.fbx");
+	AddObject(object);
+
+	for (auto layer : m_Layers) { layer->_Start(m_Renderer); }
+
+	for (auto object : m_Objects) { object->_Start(m_Renderer); }
 
 	m_Renderer->CreateFramebuffer();
-
-	Shader shader;
+	
 	Camera camera;
-	Model cube;
-
-	shader.Init("Shader.vert", "Shader.frag");
-	cube.Init("cube.fbx");
+	SetCurrentCamera(&camera);
 
 	while (!glfwWindowShouldClose(m_Renderer->GetWindow())) {
 		Timer timer;
@@ -103,25 +102,8 @@ void GameEngine::Engine::StartGameLoop()
 
 		m_Renderer->Bind();
 
-		for (int i = 0; i < m_GameLoops.size(); i++) {
-			m_GameLoops[i]();
-		}
-
-		if (m_Renderer->RenderSize.x >= 1 && m_Renderer->RenderSize.y >= 1) {
-			shader.Use();
-
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(0, 0, 0));
-			shader.SetMat4("model", model);
-
-			glm::mat4 projection = glm::perspective(glm::radians(camera.Fov),
-				(float)m_Renderer->RenderSize.x / (float)m_Renderer->RenderSize.y, 0.1f, 100.0f);
-			shader.SetMat4("projection", projection);
-			glm::mat4 view = camera.GetViewMatrix();
-			shader.SetMat4("view", view);
-
-			cube.Draw(shader);
-		}
+		for (int i = 0; i < m_GameLoops.size(); i++) { m_GameLoops[i](); }
+		for (int i = 0; i < m_Objects.size(); i++) { m_Objects[i]->_Update(m_CurrentCamera); }
 
 		m_Renderer->Unbind();
 

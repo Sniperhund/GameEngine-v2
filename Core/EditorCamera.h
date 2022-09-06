@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
+#include "Renderer.h"
+
 namespace GameEngine
 {
     enum Camera_Movement {
@@ -84,8 +86,6 @@ namespace GameEngine
                 lastY = ypos;
                 firstMouse = false;
             }
-
-            DebugLog(xpos << " " << ypos);
 
             float xoffset = xpos - lastX;
             float yoffset = lastY - ypos;
