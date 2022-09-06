@@ -30,12 +30,18 @@ namespace GameEngine {
 	public:
 		Engine(Renderer* renderer);
 
+		void RefreshObjects()
+		{
+			for (auto layer : m_Layers) { layer->_Start(m_Renderer); }
+			for (auto object : m_Objects) { object->_Start(m_Renderer); }
+		}
+
 		void UpdateImGui();
 
 		void SetCurrentCamera(Camera* camera) { m_CurrentCamera = camera; }
 
-		void AddObject(Object* object) { m_Objects.emplace_back(std::move(object)); }
-		void AddLayer(UILayer* layer);
+		void AddObject(Object* object) { m_Objects.emplace_back(std::move(object)); RefreshObjects(); }
+		void AddLayer(UILayer* layer) { m_Layers.push_back(std::move(layer)); RefreshObjects(); }
 		void AddGameLoopCallback(std::function<void()> callback) { m_GameLoops.push_back(std::move(callback)); }
 		void StartGameLoop();
 	private:

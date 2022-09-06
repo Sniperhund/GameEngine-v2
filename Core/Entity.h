@@ -34,6 +34,8 @@ namespace GameEngine {
 
 	class Object {
 	private:
+		bool m_IsInit = false;
+
 		Shader m_Shader;
 		Model m_Model;
 
@@ -41,7 +43,7 @@ namespace GameEngine {
 		std::string m_ModelPath = "";
 
 		glm::vec3 m_Position = glm::vec3(0);
-		glm::vec3 m_Scale = glm::vec3(0);
+		glm::vec3 m_Scale = glm::vec3(1);
 		glm::vec3 m_Rotation = glm::vec3(0);
 
 		Renderer* m_Renderer;
@@ -52,6 +54,9 @@ namespace GameEngine {
 		void SetScale(glm::vec3 scale) { m_Scale = scale; }
 
 		void _Start(Renderer* renderer) {
+			if (m_IsInit) return;
+
+			m_IsInit = true;
 			m_Renderer = renderer;
 			Start();
 		}
@@ -82,7 +87,11 @@ namespace GameEngine {
 				m_Shader.Use();
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(0, 0, 0));
+				model = glm::translate(model, m_Position);
+				model = glm::rotate(model, glm::radians(m_Rotation.x), glm::vec3(1, 0, 0));
+				model = glm::rotate(model, glm::radians(m_Rotation.y), glm::vec3(0, 1, 0));
+				model = glm::rotate(model, glm::radians(m_Rotation.z), glm::vec3(0, 0, 1));
+				model = glm::scale(model, m_Scale);
 				m_Shader.SetMat4("model", model);
 
 				glm::mat4 projection = glm::perspective(glm::radians(m_CurrentCamera->Fov),

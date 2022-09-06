@@ -21,10 +21,6 @@ GameEngine::Engine::Engine(Renderer* renderer) : m_Renderer(renderer) {
 	AddLayer(m_PerformanceView);
 }
 
-void GameEngine::Engine::AddLayer(UILayer* layer) {
-	m_Layers.push_back(std::move(layer));
-}
-
 void GameEngine::Engine::UpdateImGui()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -83,11 +79,8 @@ void GameEngine::Engine::StartGameLoop()
 {
 	Object* object = new Object();
 	object->SetInfo("Shader", "cube.fbx");
+	object->SetRotation(glm::vec3(45));
 	AddObject(object);
-
-	for (auto layer : m_Layers) { layer->_Start(m_Renderer); }
-
-	for (auto object : m_Objects) { object->_Start(m_Renderer); }
 
 	m_Renderer->CreateFramebuffer();
 	
