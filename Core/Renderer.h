@@ -30,6 +30,8 @@ namespace GameEngine {
 		float RenderTimeInMs;
 		float DeltaTime;
 
+		int Selected = -1;
+
 		glm::vec2 RenderSize;
 		Renderer(RendererInformation rendererInformation);
 

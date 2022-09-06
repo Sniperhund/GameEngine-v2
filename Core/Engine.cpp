@@ -18,7 +18,9 @@ GameEngine::Engine::Engine(Renderer* renderer) : m_Renderer(renderer) {
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	AddLayer(m_SceneView);
+	AddLayer(m_Hierarchy);
 	AddLayer(m_PerformanceView);
+	AddLayer(m_Properties);
 }
 
 void GameEngine::Engine::UpdateImGui()
@@ -46,6 +48,8 @@ void GameEngine::Engine::UpdateImGui()
 	ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
 
 	ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+	ImGui::ShowDemoWindow();
 
 	ImGui::BeginMenuBar();
 	if (ImGui::BeginMenu("Windows")) {
@@ -78,9 +82,20 @@ void GameEngine::Engine::UpdateImGui()
 void GameEngine::Engine::StartGameLoop()
 {
 	Object* object = new Object();
+	object->Name = "Object 1";
 	object->SetInfo("Shader", "cube.fbx");
-	object->SetRotation(glm::vec3(45));
+	object->SetRotation(glm::vec3(30));
 	AddObject(object);
+	Object* object2 = new Object();
+	object2->Name = "Object 2";
+	object2->SetInfo("Shader", "cube.fbx");
+	object2->SetRotation(glm::vec3(60));
+	AddObject(object2);
+	Object* object3 = new Object();
+	object3->Name = "Object 3";
+	object3->SetInfo("Shader", "cube.fbx");
+	object3->SetRotation(glm::vec3(160));
+	AddObject(object3);
 
 	m_Renderer->CreateFramebuffer();
 	

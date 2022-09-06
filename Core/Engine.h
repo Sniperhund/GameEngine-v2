@@ -25,6 +25,8 @@ namespace GameEngine {
 		
 		UILayer* m_SceneView = new SceneView();
 		UILayer* m_PerformanceView = new PerformanceView();
+		UILayer* m_Hierarchy = new Hierarchy(&m_Objects, 100);
+		UILayer* m_Properties = new Properties(&m_Objects);
 
 		Camera* m_CurrentCamera;
 	public:

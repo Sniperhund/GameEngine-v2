@@ -45,13 +45,21 @@ namespace GameEngine {
 		glm::vec3 m_Position = glm::vec3(0);
 		glm::vec3 m_Scale = glm::vec3(1);
 		glm::vec3 m_Rotation = glm::vec3(0);
+		glm::vec4 m_Color = glm::vec4(0);
 
 		Renderer* m_Renderer;
 		Camera* m_CurrentCamera;
 	public:
+		std::string Name = "Default Name";
+
 		void SetPosition(glm::vec3 position) { m_Position = position; }
 		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; }
 		void SetScale(glm::vec3 scale) { m_Scale = scale; }
+		void SetColor(glm::vec4 color) { m_Color = color; }
+		glm::vec3 GetPosition() { return m_Position; }
+		glm::vec3 GetRotation() { return m_Rotation; }
+		glm::vec3 GetScale() { return m_Scale; }
+		glm::vec4 GetColor() { return m_Color; }
 
 		void _Start(Renderer* renderer) {
 			if (m_IsInit) return;
@@ -99,6 +107,8 @@ namespace GameEngine {
 				m_Shader.SetMat4("projection", projection);
 				glm::mat4 view = m_CurrentCamera->GetViewMatrix();
 				m_Shader.SetMat4("view", view);
+
+				m_Shader.SetVec4("custom_color", m_Color);
 
 				m_Model.Draw(m_Shader);
 			}

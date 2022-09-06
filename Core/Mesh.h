@@ -12,7 +12,7 @@ namespace GameEngine
 #define MAX_BONE_INFLUENCE 4
 
     struct Material {
-        glm::vec3 Diffuse;
+        glm::vec3 Diffuse = glm::vec3(0.52, 0.52, 0.52);
         glm::vec3 Specular;
         glm::vec3 Ambient;
         float Shininess;
