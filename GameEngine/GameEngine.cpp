@@ -1,5 +1,7 @@
 #include <iostream>
 
+#define STB_IMAGE_IMPLEMENTATION
+
 #include "Engine.h"
 #include "Timer.h"
 #include "Debug.h"

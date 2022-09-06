@@ -51,9 +51,6 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="DefaultLibs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">

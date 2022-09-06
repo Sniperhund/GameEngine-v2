@@ -47,24 +47,28 @@ namespace GameEngine {
 		Renderer* m_Renderer;
 		Camera* m_CurrentCamera;
 	public:
-		virtual void _Start(Renderer* renderer) {
+		void SetPosition(glm::vec3 position) { m_Position = position; }
+		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; }
+		void SetScale(glm::vec3 scale) { m_Scale = scale; }
+
+		void _Start(Renderer* renderer) {
 			m_Renderer = renderer;
 			Start();
 		}
 
-		virtual void _Update(Camera* currentCamera) {
+		void _Update(Camera* currentCamera) {
 			m_CurrentCamera = currentCamera;
 			Update();
 		}
 
-		void SetInfo(std::string shaderPath, std::string modelPath) {
+		virtual void SetInfo(std::string shaderPath, std::string modelPath) {
 			m_ShaderPath = shaderPath;
 			m_ModelPath = modelPath;
 		}
 
-		void Start()
+		virtual void Start()
 		{
-			if (!m_ShaderPath.empty() && !m_ModelPath.empty()) {
+			if (m_ShaderPath.empty() && m_ModelPath.empty()) {
 				DebugError("Something went wrong. Somehow someone forgot to set the model path or shader path");
 			}
 
@@ -72,7 +76,7 @@ namespace GameEngine {
 			m_Model.Init(m_ModelPath);
 		}
 
-		void Update()
+		virtual void Update()
 		{
 			if (m_Renderer->RenderSize.x >= 1 && m_Renderer->RenderSize.y >= 1) {
 				m_Shader.Use();
