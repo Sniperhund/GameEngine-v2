@@ -49,17 +49,34 @@ namespace GameEngine {
 
 		Renderer* m_Renderer;
 		Camera* m_CurrentCamera;
+		std::vector<Object*>* m_Objects;
+		std::string m_Name = "Default Name";
 	public:
-		std::string Name = "Default Name";
 
 		void SetPosition(glm::vec3 position) { m_Position = position; }
 		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; }
 		void SetScale(glm::vec3 scale) { m_Scale = scale; }
 		void SetColor(glm::vec4 color) { m_Color = color; }
+		bool SetName(std::string name)
+		{
+			if (m_Objects->empty()) { m_Name = name; return true; }
+			for (int i = 0; i < m_Objects->size(); i++)
+			{
+				if (m_Objects->at(i) == this) continue;
+				if (m_Objects->at(i)->GetName() == m_Name) name += "(duplicate)";
+				if (SetName(name)) return true;
+				m_Name = name;
+				return true;
+			}
+			return false;
+		}
 		glm::vec3 GetPosition() { return m_Position; }
 		glm::vec3 GetRotation() { return m_Rotation; }
 		glm::vec3 GetScale() { return m_Scale; }
 		glm::vec4 GetColor() { return m_Color; }
+		std::string GetName() { return m_Name; }
+
+		Object(std::vector<Object*>* objects) : m_Objects(objects) {}
 
 		void _Start(Renderer* renderer) {
 			if (m_IsInit) return;

@@ -70,7 +70,7 @@ namespace GameEngine {
 
 		void Update() override {
 			for (int i = 0; i < m_PointerToObjectsArray->size(); i++) {
-				if (ImGui::Selectable(m_PointerToObjectsArray->at(i)->Name.c_str(), m_Renderer->Selected == i))
+				if (ImGui::Selectable(m_PointerToObjectsArray->at(i)->GetName().c_str(), m_Renderer->Selected == i))
 					m_Renderer->Selected = i;
 			}
 		}
@@ -93,9 +93,9 @@ namespace GameEngine {
 				if (m_Renderer->Selected != i) continue;
 
 				ImGui::Text("General Settings");
-				std::string name = m_PointerToObjectsArray->at(i)->Name;
+				std::string name = m_PointerToObjectsArray->at(i)->GetName();
 				if (ImGui::InputText("Name", &name, ImGuiInputTextFlags_EnterReturnsTrue))
-					m_PointerToObjectsArray->at(i)->Name = name;
+					m_PointerToObjectsArray->at(i)->SetName(name);
 
 				ImGui::Text("Transform");
 				glm::vec3 _pos = m_PointerToObjectsArray->at(i)->GetPosition();
