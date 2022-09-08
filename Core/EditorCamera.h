@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
-#include "Renderer.h"
+#include "Graphics/Renderer.h"
 
 namespace GameEngine
 {

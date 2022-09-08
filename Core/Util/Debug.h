@@ -8,4 +8,5 @@
 	__debugbreak()
 #else
 #define DebugLog(msg)
+#define DebugError(msg)
 #endif

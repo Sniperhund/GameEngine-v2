@@ -1,5 +1,5 @@
 #include "Renderer.h"
-#include "Debug.h"
+#include "../Util/Debug.h"
 
 GameEngine::Renderer::Renderer(RendererInformation rendererInformation)
 {

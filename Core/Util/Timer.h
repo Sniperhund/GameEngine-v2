@@ -1,5 +1,5 @@
 #pragma once
-#include "Debug.h"
+#include "../Util/Debug.h"
 #include <string>
 
 #include <chrono>

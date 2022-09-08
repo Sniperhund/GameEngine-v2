@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer.h"
+#include "Graphics/Renderer.h"
 #include <vector>
 #include <functional>
 
@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "EditorCamera.h"
-#include "Entity.h"
-#include "UILayer.h"
+#include "Util/Entity.h"
+#include "Util/UILayer.h"
 
 namespace GameEngine {
 	class Engine

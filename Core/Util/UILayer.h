@@ -1,7 +1,7 @@
 #pragma once
 #include <format>
 
-#include "Renderer.h"
+#include "../Graphics/Renderer.h"
 
 #include <format>
 
@@ -60,6 +60,7 @@ namespace GameEngine {
 
 	class Hierarchy : public UILayer {
 		const int m_MaxNumOfObjects;
+		std::vector<Object*> m_Objects;
 		std::vector<Object*>* m_PointerToObjectsArray;
 	public:
 		Hierarchy(std::vector<Object*>* objects, int maxNumOfObjects) : m_PointerToObjectsArray(objects), m_MaxNumOfObjects(maxNumOfObjects) {}
