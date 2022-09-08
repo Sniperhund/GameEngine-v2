@@ -108,6 +108,7 @@ namespace GameEngine {
 					}
 					if (ImGui::Button("Delete Object"))
 					{
+						// TODO: Make undo list
 						m_PointerToObjectsArray->erase(m_PointerToObjectsArray->begin() + i);
 						ImGui::CloseCurrentPopup();
 					}
