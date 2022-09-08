@@ -38,7 +38,7 @@ namespace GameEngine {
 			for (auto object : *m_Objects)
 			{
 				object->_Start(m_Renderer, m_Objects);
-			} 
+			}
 		}
 
 		void UpdateImGui();

@@ -24,6 +24,7 @@ namespace GameEngine {
 
 		unsigned int m_framebuffer = 0;
 		unsigned int m_textureID = 0;
+		unsigned int m_depthbuffer = 0;
 
 		float m_LastFrame;
 	public:

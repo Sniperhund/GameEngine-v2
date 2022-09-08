@@ -34,12 +34,18 @@ GameEngine::Renderer::Renderer(RendererInformation rendererInformation)
 void GameEngine::Renderer::CreateFramebuffer() {
 	glGenFramebuffers(1, &m_framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+	// create depth texture
+	glGenRenderbuffers(1, &m_depthbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_depthbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, RenderSize.x, RenderSize.y);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	// create a color attachment texture
 	glGenTextures(1, &m_textureID);
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, RenderSize.x, RenderSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureID, 0);
 }
 
