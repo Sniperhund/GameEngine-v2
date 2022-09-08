@@ -49,7 +49,7 @@ void GameEngine::Engine::UpdateImGui()
 
 	ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 
 	ImGui::BeginMenuBar();
 	if (ImGui::BeginMenu("Windows")) {
@@ -92,6 +92,12 @@ void GameEngine::Engine::StartGameLoop()
 	object2->SetColor(glm::vec4(1, 0, 0, 1));
 	object2->SetPosition(glm::vec3(0, 2, 0));
 	AddObject(object2);
+	std::shared_ptr<Object> object3 = std::make_shared<Object>();
+	object3->SetName("Object");
+	object3->SetInfo("Shader", "cube.fbx");
+	object3->SetColor(glm::vec4(1, 0, 0, 1));
+	object3->SetPosition(glm::vec3(0, 2, 0));
+	AddObject(object3);
 
 	glEnable(GL_DEPTH_TEST);
 

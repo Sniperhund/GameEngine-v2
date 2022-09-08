@@ -8,6 +8,7 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_stdlib.h>
 #include <memory>
+#include <memory>
 
 #include "EditorCamera.h"
 #include "Util/Entity.h"
@@ -25,7 +26,7 @@ namespace GameEngine {
 		
 		UILayer* m_SceneView = new SceneView();
 		UILayer* m_PerformanceView = new PerformanceView();
-		UILayer* m_Hierarchy = new Hierarchy(m_Objects, 100);
+		UILayer* m_Hierarchy = new Hierarchy(m_Objects);
 		UILayer* m_Properties = new Properties(m_Objects);
 
 		Camera* m_CurrentCamera;
@@ -44,8 +45,14 @@ namespace GameEngine {
 		void UpdateImGui();
 
 		void SetCurrentCamera(Camera* camera) { m_CurrentCamera = camera; }
-
-		// TODO: Add function that creates object and returns pointer to it.
+		std::shared_ptr<Object> CreateObject(std::string name, std::string shaderPath, std::string modelPath)
+		{
+			std::shared_ptr<Object> _object = std::make_shared<Object>();
+			_object->SetName(name);
+			_object->SetInfo(shaderPath, modelPath);
+			AddObject(_object);
+			return _object;
+		}
 		void AddObject(std::shared_ptr<Object> object) { m_Objects->emplace_back(std::move(object)); RefreshObjects(); }
 		void AddLayer(UILayer* layer) { m_Layers.push_back(std::move(layer)); RefreshObjects(); }
 		void AddGameLoopCallback(std::function<void()> callback) { m_GameLoops.push_back(std::move(callback)); }

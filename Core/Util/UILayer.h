@@ -59,10 +59,14 @@ namespace GameEngine {
 	};
 
 	class Hierarchy : public UILayer {
-		const int m_MaxNumOfObjects;
 		std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_PointerToObjectsArray;
+		bool m_openNewObject = false;
+
+		std::string m_modelPath;
+		std::string m_shaderPath;
+		std::string m_name;
 	public:
-		Hierarchy(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects, int maxNumOfObjects) : m_MaxNumOfObjects(maxNumOfObjects)
+		Hierarchy(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects)
 		{
 			m_PointerToObjectsArray = std::move(objects);
 		}
@@ -72,13 +76,70 @@ namespace GameEngine {
 		}
 
 		void Update() override {
+			if (m_openNewObject) ShowNewObject(&m_openNewObject);
+			
+			if (ImGui::BeginPopupContextWindow())
+			{
+				if (ImGui::Button("Create Object"))
+				{
+					m_openNewObject = true;
+				}
 
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::BeginPopup("NewObject"))
+			{
+				ImGui::Text("Hello");
+				ImGui::EndPopup();
+			}
 			
 			for (int i = 0; i < m_PointerToObjectsArray->size(); i++) {
 				if (ImGui::Selectable(std::format("{}##{}", m_PointerToObjectsArray->at(i)->GetName(),
 					m_PointerToObjectsArray->at(i)->GetUUID().str()).c_str(), m_Renderer->Selected == i))
+				{
 					m_Renderer->Selected = i;
+				}
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::Button("Create Object"))
+					{
+						m_openNewObject = true;
+					}
+					if (ImGui::Button("Delete Object"))
+					{
+						m_PointerToObjectsArray->erase(m_PointerToObjectsArray->begin() + i);
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
 			}
+		}
+	private:
+		void ShowNewObject(bool* p_open)
+		{
+			if (!ImGui::Begin("New Object", p_open))
+			{
+				ImGui::End();
+				return;
+			}
+			
+			ImGui::InputText("Model Path", &m_modelPath);
+			ImGui::InputText("Shader Path", &m_shaderPath);
+			ImGui::InputText("Name", &m_name);
+
+			ImGui::Spacing();
+			if (ImGui::Button("Submit"))
+			{
+				std::shared_ptr<Object> _object = std::make_shared<Object>();
+				_object->SetName(m_name);
+				_object->SetInfo(m_shaderPath, m_modelPath);
+				_object->_Start(m_Renderer, m_PointerToObjectsArray);
+				m_PointerToObjectsArray->emplace_back(std::move(_object));
+				*p_open = false;
+			}
+
+			ImGui::End();
 		}
 	};
 
