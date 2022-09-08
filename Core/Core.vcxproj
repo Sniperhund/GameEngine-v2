@@ -29,6 +29,8 @@
     <ClInclude Include="Util\Entity.h" />
     <ClInclude Include="Util\Timer.h" />
     <ClInclude Include="Util\UILayer.h" />
+    <ClInclude Include="Vendors\uuid_v4\endianness.h" />
+    <ClInclude Include="Vendors\uuid_v4\uuid_v4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
@@ -202,6 +204,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>

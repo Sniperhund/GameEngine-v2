@@ -2,6 +2,9 @@
 
 #include <glm/glm.hpp>
 #include <format>
+#include <utility>
+
+#include "../Vendors/uuid_v4/uuid_v4.h"
 
 #include "EditorCamera.h"
 #include "../Graphics/Shader.h"
@@ -47,18 +50,17 @@ namespace GameEngine {
 		glm::vec3 m_Rotation = glm::vec3(0);
 		glm::vec4 m_Color = glm::vec4(0);
 
-		Renderer* m_Renderer;
-		Camera* m_CurrentCamera;
+		Renderer* m_Renderer = nullptr;
+		Camera* m_CurrentCamera = nullptr;
+		std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects;
 		std::string m_Name = "Default Name";
+		UUIDv4::UUID uuid = UUIDv4::UUIDGenerator<std::mt19937>().getUUID();
 	public:
-
 		void SetPosition(glm::vec3 position) { m_Position = position; }
 		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; }
 		void SetScale(glm::vec3 scale) { m_Scale = scale; }
 		void SetColor(glm::vec4 color) { m_Color = color; }
-		void SetName(std::string name)
-		{
-			// TODO: Check for name duplication
+		void SetName(std::string name) {
 			m_Name = name;
 		}
 		glm::vec3 GetPosition() { return m_Position; }
@@ -66,10 +68,12 @@ namespace GameEngine {
 		glm::vec3 GetScale() { return m_Scale; }
 		glm::vec4 GetColor() { return m_Color; }
 		std::string GetName() { return m_Name; }
+		UUIDv4::UUID GetUUID() { return uuid; }
 
-		void _Start(Renderer* renderer) {
+		void _Start(Renderer* renderer, std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects) {
 			if (m_IsInit) return;
-
+			
+			m_Objects = std::move(objects);
 			m_IsInit = true;
 			m_Renderer = renderer;
 			Start();

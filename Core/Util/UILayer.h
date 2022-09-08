@@ -60,18 +60,23 @@ namespace GameEngine {
 
 	class Hierarchy : public UILayer {
 		const int m_MaxNumOfObjects;
-		std::vector<Object*> m_Objects;
-		std::vector<Object*>* m_PointerToObjectsArray;
+		std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_PointerToObjectsArray;
 	public:
-		Hierarchy(std::vector<Object*>* objects, int maxNumOfObjects) : m_PointerToObjectsArray(objects), m_MaxNumOfObjects(maxNumOfObjects) {}
+		Hierarchy(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects, int maxNumOfObjects) : m_MaxNumOfObjects(maxNumOfObjects)
+		{
+			m_PointerToObjectsArray = std::move(objects);
+		}
 
 		void Start() override {
 			title = "Hierarchy";
 		}
 
 		void Update() override {
+
+			
 			for (int i = 0; i < m_PointerToObjectsArray->size(); i++) {
-				if (ImGui::Selectable(m_PointerToObjectsArray->at(i)->GetName().c_str(), m_Renderer->Selected == i))
+				if (ImGui::Selectable(std::format("{}##{}", m_PointerToObjectsArray->at(i)->GetName(),
+					m_PointerToObjectsArray->at(i)->GetUUID().str()).c_str(), m_Renderer->Selected == i))
 					m_Renderer->Selected = i;
 			}
 		}
@@ -80,9 +85,12 @@ namespace GameEngine {
 	class Properties : public UILayer
 	{
 	private:
-		std::vector<Object*>* m_PointerToObjectsArray;
+		std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_PointerToObjectsArray;
 	public:
-		Properties(std::vector<Object*>* objects) : m_PointerToObjectsArray(objects) {}
+		Properties(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects)
+		{
+			m_PointerToObjectsArray = std::move(objects);
+		}
 
 		void Start() override {
 			title = "Properties";

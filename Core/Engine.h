@@ -21,12 +21,12 @@ namespace GameEngine {
 
 		std::vector<std::function<void()>> m_GameLoops;
 		std::vector<UILayer*> m_Layers;
-		std::vector<Object*> m_Objects;
+		std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects = std::make_shared<std::vector<std::shared_ptr<Object>>>();
 		
 		UILayer* m_SceneView = new SceneView();
 		UILayer* m_PerformanceView = new PerformanceView();
-		UILayer* m_Hierarchy = new Hierarchy(&m_Objects, 100);
-		UILayer* m_Properties = new Properties(&m_Objects);
+		UILayer* m_Hierarchy = new Hierarchy(m_Objects, 100);
+		UILayer* m_Properties = new Properties(m_Objects);
 
 		Camera* m_CurrentCamera;
 	public:
@@ -35,14 +35,18 @@ namespace GameEngine {
 		void RefreshObjects()
 		{
 			for (auto layer : m_Layers) { layer->_Start(m_Renderer); }
-			for (auto object : m_Objects) { object->_Start(m_Renderer); }
+			for (auto object : *m_Objects)
+			{
+				object->_Start(m_Renderer, m_Objects);
+			} 
 		}
 
 		void UpdateImGui();
 
 		void SetCurrentCamera(Camera* camera) { m_CurrentCamera = camera; }
 
-		void AddObject(Object* object) { m_Objects.emplace_back(std::move(object)); RefreshObjects(); }
+		// TODO: Add function that creates object and returns pointer to it.
+		void AddObject(std::shared_ptr<Object> object) { m_Objects->emplace_back(std::move(object)); RefreshObjects(); }
 		void AddLayer(UILayer* layer) { m_Layers.push_back(std::move(layer)); RefreshObjects(); }
 		void AddGameLoopCallback(std::function<void()> callback) { m_GameLoops.push_back(std::move(callback)); }
 		void StartGameLoop();
