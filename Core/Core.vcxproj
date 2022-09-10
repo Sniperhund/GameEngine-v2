@@ -29,6 +29,7 @@
     <ClInclude Include="Util\Entity.h" />
     <ClInclude Include="Util\Timer.h" />
     <ClInclude Include="Util\UILayer.h" />
+    <ClInclude Include="Vendors\ImGuiFileDialog\ImGuiFileDialog.h" />
     <ClInclude Include="Vendors\uuid_v4\endianness.h" />
     <ClInclude Include="Vendors\uuid_v4\uuid_v4.h" />
   </ItemGroup>

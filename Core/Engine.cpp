@@ -82,19 +82,19 @@ void GameEngine::Engine::UpdateImGui()
 void GameEngine::Engine::StartGameLoop()
 {
 	std::shared_ptr<Object> object = std::make_shared<Object>();
-	object->SetInfo("Shader", "cube.fbx");
+	object->SetInfo("Unlit", "cube.fbx");
 	object->SetName("Object");
 	object->SetScale(glm::vec3(5, 1, 5));
 	AddObject(object);
 	std::shared_ptr<Object> object2 = std::make_shared<Object>();
 	object2->SetName("Object");
-	object2->SetInfo("Shader", "cube.fbx");
+	object2->SetInfo("Unlit", "cube.fbx");
 	object2->SetColor(glm::vec4(1, 0, 0, 1));
 	object2->SetPosition(glm::vec3(0, 2, 0));
 	AddObject(object2);
 	std::shared_ptr<Object> object3 = std::make_shared<Object>();
 	object3->SetName("Object");
-	object3->SetInfo("Shader", "cube.fbx");
+	object3->SetInfo("Unlit", "cube.fbx");
 	object3->SetColor(glm::vec4(1, 0, 0, 1));
 	object3->SetPosition(glm::vec3(0, 2, 0));
 	AddObject(object3);

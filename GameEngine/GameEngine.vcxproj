@@ -144,8 +144,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader.frag" />
-    <None Include="Shader.vert" />
+    <None Include="Unlit.frag" />
+    <None Include="Unlit.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

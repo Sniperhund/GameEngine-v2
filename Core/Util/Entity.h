@@ -54,21 +54,27 @@ namespace GameEngine {
 		Camera* m_CurrentCamera = nullptr;
 		std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects;
 		std::string m_Name = "Default Name";
-		UUIDv4::UUID uuid = UUIDv4::UUIDGenerator<std::mt19937>().getUUID();
+		UUIDv4::UUID m_uuid = UUIDv4::UUIDGenerator<std::mt19937>().getUUID();
 	public:
 		void SetPosition(glm::vec3 position) { m_Position = position; }
 		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; }
 		void SetScale(glm::vec3 scale) { m_Scale = scale; }
 		void SetColor(glm::vec4 color) { m_Color = color; }
-		void SetName(std::string name) {
-			m_Name = name;
+		void SetName(std::string name) { m_Name = name; }
+		void SetShader(std::string shader)
+		{
+			m_ShaderPath = shader;
+			m_Shader.Init(std::format("{}.vert", m_ShaderPath).c_str(),
+				std::format("{}.frag", m_ShaderPath).c_str());
 		}
+		
 		glm::vec3 GetPosition() { return m_Position; }
 		glm::vec3 GetRotation() { return m_Rotation; }
 		glm::vec3 GetScale() { return m_Scale; }
 		glm::vec4 GetColor() { return m_Color; }
 		std::string GetName() { return m_Name; }
-		UUIDv4::UUID GetUUID() { return uuid; }
+		UUIDv4::UUID GetUUID() { return m_uuid; }
+		std::string GetShader() { return m_ShaderPath; }
 
 		void _Start(Renderer* renderer, std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects) {
 			if (m_IsInit) return;

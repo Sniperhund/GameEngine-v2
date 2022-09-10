@@ -48,6 +48,7 @@ namespace GameEngine {
 		void Start() override {
 			title = "SceneView";
 			removePadding = true;
+			active = true;
 		}
 
 		void Update() override {
@@ -73,6 +74,7 @@ namespace GameEngine {
 
 		void Start() override {
 			title = "Hierarchy";
+			active = true;
 		}
 
 		void Update() override {
@@ -156,6 +158,7 @@ namespace GameEngine {
 
 		void Start() override {
 			title = "Properties";
+			active = true;
 		}
 
 		void Update() override
@@ -191,6 +194,16 @@ namespace GameEngine {
 				ImGui::SetNextItemWidth(w);
 				ImGui::ColorPicker4("Color", col, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_NoInputs);
 				m_PointerToObjectsArray->at(i)->SetColor(glm::vec4(col[0], col[1], col[2], col[3]));
+
+				const char* items[] = { "Unlit", "Lit" };
+				static int item_current = 0;
+				for (int j = 0; j < IM_ARRAYSIZE(items); j++)
+				{
+					if (m_PointerToObjectsArray->at(i)->GetShader() == items[j]) item_current = j;
+				}
+				ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+				if (m_PointerToObjectsArray->at(i)->GetShader() != items[item_current])
+					m_PointerToObjectsArray->at(i)->SetShader(items[item_current]);
 			}
 		}
 	};
