@@ -15,7 +15,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-	TexCoords = aTexCoords;
+    TexCoords = aTexCoords;
     Normal = aNormal;
     Tangent = aTangent;
     Bitangent = aBitangent;

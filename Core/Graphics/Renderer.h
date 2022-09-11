@@ -4,59 +4,55 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
 
-namespace GameEngine {
-	struct RendererInformation {
-		int width;
-		int height;
-		std::string title;
+namespace GameEngine
+{
+    struct RendererInformation
+    {
+        int width;
+        int height;
+        std::string title;
 
-		RendererInformation(int _width = 800, int _height = 600, std::string _title = "GameEngine") :
-			width(_width), height(_height), title(_title) {}
-	};
+        RendererInformation(int _width = 800, int _height = 600, std::string _title = "GameEngine") :
+            width(_width), height(_height), title(_title)
+        {
+        }
+    };
 
-	class Renderer
-	{
-	private:
-		GLFWwindow* m_window;
+    class Renderer
+    {
+    private:
+        GLFWwindow* m_window;
 
-		RendererInformation m_RendererInformation;
+        RendererInformation m_RendererInformation;
 
-		unsigned int m_framebuffer = 0;
-		unsigned int m_textureID = 0;
-		unsigned int m_depthbuffer = 0;
+        unsigned int m_framebuffer = 0;
+        unsigned int m_textureID = 0;
+        unsigned int m_depthbuffer = 0;
 
-		float m_LastFrame;
-	public:
-		float RenderTimeInMs;
-		float DeltaTime;
+        float m_LastFrame;
+    public:
+        glm::mat4 Projection;
+        glm::mat4 View;
 
-		int Selected = -1;
+        float RenderTimeInMs;
+        float DeltaTime;
 
-		glm::vec2 RenderSize;
-		Renderer(RendererInformation rendererInformation);
+        int Selected = -1;
 
-		void CreateFramebuffer();
-		void Bind();
-		void Unbind();
-		unsigned int GetTexture() { return m_textureID; }
+        glm::vec2 RenderSize;
+        Renderer(RendererInformation rendererInformation);
 
-		void Resize(int width, int height) {
-			if (RenderSize.x == width && RenderSize.y == height) return;
-			glViewport(0, 0, width, height);
-			RenderSize.x = width;
-			RenderSize.y = height;
+        void CreateFramebuffer();
+        void Bind();
+        void Unbind();
+        unsigned int GetTexture() const;
 
-			CreateFramebuffer();
-		}
+        void Resize(int width, int height);
 
-		void UpdateDeltaTime()
-		{
-			float currentFrame = static_cast<float>(glfwGetTime());
-			DeltaTime = currentFrame - m_LastFrame;
-			m_LastFrame = currentFrame;
-		}
+        void UpdateDeltaTime();
 
-		GLFWwindow* GetWindow() { return m_window; }
-	};
+        GLFWwindow* GetWindow() const;
+    };
 }

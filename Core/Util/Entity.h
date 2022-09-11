@@ -2,132 +2,79 @@
 
 #include <glm/glm.hpp>
 #include <format>
-#include <utility>
 
 #include "../Vendors/uuid_v4/uuid_v4.h"
 
-#include "EditorCamera.h"
+#include "../EditorCamera.h"
 #include "../Graphics/Shader.h"
 #include "../Graphics/Model.h"
 #include "../Graphics/Renderer.h"
 
-namespace GameEngine {
-	class Entity {
-	protected:
-		glm::vec3 m_Position = glm::vec3(0);
-		glm::vec3 m_Scale = glm::vec3(0);
-		glm::vec3 m_Rotation = glm::vec3(0);
+namespace GameEngine
+{
+    class Entity
+    {
+    protected:
+        glm::vec3 m_Position = glm::vec3(0);
+        glm::vec3 m_Scale = glm::vec3(0);
+        glm::vec3 m_Rotation = glm::vec3(0);
 
-		Renderer* m_Renderer;
-		Camera* m_CurrentCamera;
-	public:
-		virtual void _Start(Renderer* renderer) {
-			m_Renderer = renderer;
-			Start();
-		}
+        Renderer* m_Renderer;
+        Camera* m_CurrentCamera;
+    public:
+        virtual void _Start(Renderer* renderer);
 
-		virtual void _Update(Camera* currentCamera) {
-			m_CurrentCamera = currentCamera;
-			Update();
-		}
+        virtual void _Update(Camera* currentCamera);
 
-		virtual void Start() {}
-		virtual void Update() {}
-	};
+        virtual void Start() {}
 
-	class Object {
-	private:
-		bool m_IsInit = false;
+        virtual void Update() {}
+    };
 
-		Shader m_Shader;
-		Model m_Model;
+    class Object
+    {
+    private:
+        bool m_IsInit = false;
 
-		std::string m_ShaderPath = "";
-		std::string m_ModelPath = "";
+        Shader m_Shader;
+        Model m_Model;
 
-		glm::vec3 m_Position = glm::vec3(0);
-		glm::vec3 m_Scale = glm::vec3(1);
-		glm::vec3 m_Rotation = glm::vec3(0);
-		glm::vec4 m_Color = glm::vec4(0);
+        std::string m_ShaderPath = "";
+        std::string m_ModelPath = "";
 
-		Renderer* m_Renderer = nullptr;
-		Camera* m_CurrentCamera = nullptr;
-		std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects;
-		std::string m_Name = "Default Name";
-		UUIDv4::UUID m_uuid = UUIDv4::UUIDGenerator<std::mt19937>().getUUID();
-	public:
-		void SetPosition(glm::vec3 position) { m_Position = position; }
-		void SetRotation(glm::vec3 rotation) { m_Rotation = rotation; }
-		void SetScale(glm::vec3 scale) { m_Scale = scale; }
-		void SetColor(glm::vec4 color) { m_Color = color; }
-		void SetName(std::string name) { m_Name = name; }
-		void SetShader(std::string shader)
-		{
-			m_ShaderPath = shader;
-			m_Shader.Init(std::format("{}.vert", m_ShaderPath).c_str(),
-				std::format("{}.frag", m_ShaderPath).c_str());
-		}
-		
-		glm::vec3 GetPosition() { return m_Position; }
-		glm::vec3 GetRotation() { return m_Rotation; }
-		glm::vec3 GetScale() { return m_Scale; }
-		glm::vec4 GetColor() { return m_Color; }
-		std::string GetName() { return m_Name; }
-		UUIDv4::UUID GetUUID() { return m_uuid; }
-		std::string GetShader() { return m_ShaderPath; }
+        glm::vec3 m_Position = glm::vec3(0);
+        glm::vec3 m_Scale = glm::vec3(1);
+        glm::vec3 m_Rotation = glm::vec3(0);
+        glm::vec4 m_Color = glm::vec4(0);
 
-		void _Start(Renderer* renderer, std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects) {
-			if (m_IsInit) return;
-			
-			m_Objects = std::move(objects);
-			m_IsInit = true;
-			m_Renderer = renderer;
-			Start();
-		}
+        Renderer* m_Renderer = nullptr;
+        Camera* m_CurrentCamera = nullptr;
+        std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects;
+        std::string m_Name = "Default Name";
+        UUIDv4::UUID m_uuid = UUIDv4::UUIDGenerator<std::mt19937>().getUUID();
+    public:
+        void SetPosition(glm::vec3 position);
+        void SetRotation(glm::vec3 rotation);
+        void SetScale(glm::vec3 scale);
+        void SetColor(glm::vec4 color);
+        void SetName(std::string name);
+        void SetShader(std::string shader);
 
-		void _Update(Camera* currentCamera) {
-			m_CurrentCamera = currentCamera;
-			Update();
-		}
+        glm::vec3 GetPosition();
+        glm::vec3 GetRotation();
+        glm::vec3 GetScale();
+        glm::vec4 GetColor();
+        std::string GetName();
+        UUIDv4::UUID GetUUID();
+        std::string GetShader();
+        std::string GetModel();
 
-		virtual void SetInfo(std::string shaderPath, std::string modelPath) {
-			m_ShaderPath = shaderPath;
-			m_ModelPath = modelPath;
-		}
+        void _Start(Renderer* renderer, std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects);
+        void _Update(Camera* currentCamera);
 
-		virtual void Start()
-		{
-			if (m_ShaderPath.empty() && m_ModelPath.empty()) {
-				DebugError("Something went wrong. Somehow someone forgot to set the model path or shader path");
-			}
+        virtual void SetInfo(std::string shaderPath, std::string modelPath);
 
-			m_Shader.Init(std::format("{}.vert", m_ShaderPath).c_str(), std::format("{}.frag", m_ShaderPath).c_str());
-			m_Model.Init(m_ModelPath);
-		}
-
-		virtual void Update()
-		{
-			if (m_Renderer->RenderSize.x >= 1 && m_Renderer->RenderSize.y >= 1) {
-				m_Shader.Use();
-
-				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, m_Position);
-				model = glm::rotate(model, glm::radians(m_Rotation.x), glm::vec3(1, 0, 0));
-				model = glm::rotate(model, glm::radians(m_Rotation.y), glm::vec3(0, 1, 0));
-				model = glm::rotate(model, glm::radians(m_Rotation.z), glm::vec3(0, 0, 1));
-				model = glm::scale(model, m_Scale);
-				m_Shader.SetMat4("model", model);
-
-				glm::mat4 projection = glm::perspective(glm::radians(m_CurrentCamera->Fov),
-					(float)m_Renderer->RenderSize.x / (float)m_Renderer->RenderSize.y, 0.1f, 100.0f);
-				m_Shader.SetMat4("projection", projection);
-				glm::mat4 view = m_CurrentCamera->GetViewMatrix();
-				m_Shader.SetMat4("view", view);
-
-				m_Shader.SetVec4("custom_color", m_Color);
-
-				m_Model.Draw(m_Shader);
-			}
-		}
-	};
+        virtual void Start();
+        virtual void Update();
+    };
 }

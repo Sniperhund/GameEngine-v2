@@ -7,7 +7,8 @@
 
 namespace GameEngine
 {
-    enum Camera_Movement {
+    enum Camera_Movement
+    {
         FORWARD,
         BACKWARD,
         LEFT,
@@ -28,6 +29,7 @@ namespace GameEngine
     private:
         float lastX, lastY;
         bool firstMouse = true;
+        float MovementSpeed;
     public:
         glm::vec3 Position;
         glm::vec3 Front;
@@ -38,12 +40,17 @@ namespace GameEngine
         float Yaw;
         float Pitch;
 
-        float MovementSpeed;
+        float MovementSpeedFast;
+        float MovementSpeedSlow;
         float MouseSensitivity;
         float Fov;
 
-        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Fov(FOV)
+        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+               float yaw = YAW, float pitch = PITCH) : MovementSpeed(SPEED), Front(glm::vec3(0.0f, 0.0f, -1.0f)),
+                                                       MouseSensitivity(SENSITIVITY), Fov(FOV)
         {
+            MovementSpeedSlow = MovementSpeed;
+            MovementSpeedFast = MovementSpeed * 3;
             Position = position;
             WorldUp = up;
             Yaw = yaw;
@@ -51,7 +58,8 @@ namespace GameEngine
             updateCameraVectors();
         }
 
-        Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Fov(FOV)
+        Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) :
+            MovementSpeed(SPEED), Front(glm::vec3(0.0f, 0.0f, -1.0f)), MouseSensitivity(SENSITIVITY), Fov(FOV)
         {
             Position = glm::vec3(posX, posY, posZ);
             WorldUp = glm::vec3(upX, upY, upZ);
@@ -62,18 +70,18 @@ namespace GameEngine
 
         glm::mat4 GetViewMatrix()
         {
-            return glm::lookAt(Position, Position + Front, Up);
+            return lookAt(Position, Position + Front, Up);
         }
 
         void HandleInput(Renderer* renderer)
         {
             int state = glfwGetMouseButton(renderer->GetWindow(), GLFW_MOUSE_BUTTON_RIGHT);
-	        if (state != GLFW_PRESS)
-	        {
+            if (state != GLFW_PRESS)
+            {
                 glfwSetInputMode(renderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                 firstMouse = true;
                 return;
-	        }
+            }
 
             glfwSetInputMode(renderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -95,6 +103,10 @@ namespace GameEngine
 
             ProcessMouseMovement(xoffset, yoffset);
 
+            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                MovementSpeed = MovementSpeedFast;
+            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+                MovementSpeed = MovementSpeedSlow;
             if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_W) == GLFW_PRESS)
                 ProcessKeyboard(FORWARD, renderer->DeltaTime);
             if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_S) == GLFW_PRESS)
@@ -152,10 +164,10 @@ namespace GameEngine
             front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
             front.y = sin(glm::radians(Pitch));
             front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-            Front = glm::normalize(front);
+            Front = normalize(front);
 
-            Right = glm::normalize(glm::cross(Front, WorldUp));
-            Up = glm::normalize(glm::cross(Right, Front));
+            Right = normalize(cross(Front, WorldUp));
+            Up = normalize(cross(Right, Front));
         }
     };
 }
