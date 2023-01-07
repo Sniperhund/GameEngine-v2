@@ -14,8 +14,6 @@ namespace GameEngine
     class Engine
     {
     private:
-        Renderer* m_Renderer;
-
         std::vector<std::function<void()>> m_GameLoops;
         std::vector<UILayer*> m_Layers;
         std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects = std::make_shared<std::vector<std::shared_ptr<
@@ -29,9 +27,7 @@ namespace GameEngine
 
         Camera* m_CurrentCamera;
     public:
-        Engine(Renderer* renderer);
-
-        void RefreshObjects();
+        Engine();
 
         void AddShader(std::shared_ptr<Shader> shader);
 

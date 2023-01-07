@@ -24,9 +24,8 @@ void GameEngine::UILayer::_Update()
     if (removePadding) ImGui::PopStyleVar();
 }
 
-void GameEngine::UILayer::_Start(Renderer* renderer)
+void GameEngine::UILayer::_Start()
 {
-    m_Renderer = renderer;
     Start();
 }
 
@@ -40,9 +39,9 @@ void GameEngine::SceneView::Start()
 void GameEngine::SceneView::Update()
 {
     ImVec2 view = ImGui::GetContentRegionAvail();
-    m_Renderer->Resize(view.x, view.y);
-    ImGui::Image(reinterpret_cast<void*>(m_Renderer->GetTexture()),
-                 ImVec2{m_Renderer->RenderSize.x, m_Renderer->RenderSize.y}, ImVec2{0, 1}, ImVec2{1, 0});
+    Renderer::Resize(view.x, view.y);
+    ImGui::Image(reinterpret_cast<void*>(Renderer::GetTexture()),
+                 ImVec2{Renderer::RenderSize.x, Renderer::RenderSize.y}, ImVec2{0, 1}, ImVec2{1, 0});
 }
 
 GameEngine::Hierarchy::Hierarchy(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects)
@@ -68,13 +67,14 @@ void GameEngine::Hierarchy::Update()
             m_openNewObject = true;
         }
         ImGui::Separator();
+        // All objects needs to reworked to work with a scene object instead of this.
         if (ImGui::TreeNodeEx("3D Objects", ImGuiTreeNodeFlags_DefaultOpen))
         {
             if (ImGui::Button("Plane"))
             {
                 _object->SetName("Plane");
                 _object->SetInfo(defaultShader, planeModel);
-                _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                _object->_Start(m_PointerToObjectsArray);
                 m_PointerToObjectsArray->emplace_back(std::move(_object));
                 ImGui::CloseCurrentPopup();
             }
@@ -82,7 +82,7 @@ void GameEngine::Hierarchy::Update()
             {
                 _object->SetName("Cube");
                 _object->SetInfo(defaultShader, cubeModel);
-                _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                _object->_Start(m_PointerToObjectsArray);
                 m_PointerToObjectsArray->emplace_back(std::move(_object));
                 ImGui::CloseCurrentPopup();
             }
@@ -90,7 +90,7 @@ void GameEngine::Hierarchy::Update()
             {
                 _object->SetName("Sphere");
                 _object->SetInfo(defaultShader, sphereModel);
-                _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                _object->_Start(m_PointerToObjectsArray);
                 m_PointerToObjectsArray->emplace_back(std::move(_object));
                 ImGui::CloseCurrentPopup();
             }
@@ -98,7 +98,7 @@ void GameEngine::Hierarchy::Update()
             {
                 _object->SetName("Cylinder");
                 _object->SetInfo(defaultShader, cylinderModel);
-                _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                _object->_Start(m_PointerToObjectsArray);
                 m_PointerToObjectsArray->emplace_back(std::move(_object));
                 ImGui::CloseCurrentPopup();
             }
@@ -112,9 +112,9 @@ void GameEngine::Hierarchy::Update()
     {
         if (ImGui::Selectable(std::format("{}##{}", m_PointerToObjectsArray->at(i)->GetName(),
                                           m_PointerToObjectsArray->at(i)->GetUUID().str()).c_str(),
-                              m_Renderer->Selected == i))
+                              Renderer::Selected == i))
         {
-            m_Renderer->Selected = i;
+            Renderer::Selected = i;
         }
         if (ImGui::BeginPopupContextItem())
         {
@@ -137,7 +137,7 @@ void GameEngine::Hierarchy::Update()
                 _object->SetPosition(m_PointerToObjectsArray->at(i)->GetPosition());
                 _object->SetRotation(m_PointerToObjectsArray->at(i)->GetRotation());
                 _object->SetScale(m_PointerToObjectsArray->at(i)->GetScale());
-                _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                _object->_Start(m_PointerToObjectsArray);
                 m_PointerToObjectsArray->emplace_back(std::move(_object));
                 ImGui::CloseCurrentPopup();
             }
@@ -148,7 +148,7 @@ void GameEngine::Hierarchy::Update()
                 {
                     _object->SetName("Plane");
                     _object->SetInfo(defaultShader, planeModel);
-                    _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                    _object->_Start(m_PointerToObjectsArray);
                     m_PointerToObjectsArray->emplace_back(std::move(_object));
                     ImGui::CloseCurrentPopup();
                 }
@@ -156,7 +156,7 @@ void GameEngine::Hierarchy::Update()
                 {
                     _object->SetName("Cube");
                     _object->SetInfo(defaultShader, cubeModel);
-                    _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                    _object->_Start(m_PointerToObjectsArray);
                     m_PointerToObjectsArray->emplace_back(std::move(_object));
                     ImGui::CloseCurrentPopup();
                 }
@@ -164,7 +164,7 @@ void GameEngine::Hierarchy::Update()
                 {
                     _object->SetName("Sphere");
                     _object->SetInfo(defaultShader, sphereModel);
-                    _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                    _object->_Start(m_PointerToObjectsArray);
                     m_PointerToObjectsArray->emplace_back(std::move(_object));
                     ImGui::CloseCurrentPopup();
                 }
@@ -172,7 +172,7 @@ void GameEngine::Hierarchy::Update()
                 {
                     _object->SetName("Cylinder");
                     _object->SetInfo(defaultShader, cylinderModel);
-                    _object->_Start(m_Renderer, m_PointerToObjectsArray);
+                    _object->_Start(m_PointerToObjectsArray);
                     m_PointerToObjectsArray->emplace_back(std::move(_object));
                     ImGui::CloseCurrentPopup();
                 }
@@ -216,7 +216,7 @@ void GameEngine::Hierarchy::ShowNewObject(bool* p_open)
         if (m_name.empty()) m_name = "Default Name";
         _object->SetName(m_name);
         _object->SetInfo(m_shaderPath, m_modelPath);
-        _object->_Start(m_Renderer, m_PointerToObjectsArray);
+        _object->_Start(m_PointerToObjectsArray);
         m_PointerToObjectsArray->emplace_back(std::move(_object));
 
         m_name = "";
@@ -244,7 +244,7 @@ void GameEngine::Properties::Update()
 {
     for (int i = 0; i < m_PointerToObjectsArray->size(); i++)
     {
-        if (m_Renderer->Selected != i) continue;
+        if (Renderer::Selected != i) continue;
 
         ImGui::Text("General Settings");
         std::string name = m_PointerToObjectsArray->at(i)->GetName();
@@ -295,7 +295,7 @@ void GameEngine::PerformanceView::Update()
 {
     if (!active) return;
 
-    lastRenderTime = m_Renderer->RenderTimeInMs;
+    lastRenderTime = Renderer::RenderTimeInMs;
     ImGui::Text(std::format("Frame Time: {}ms", round(lastRenderTime * 100) / 100).c_str());
 
     if (ImGui::TreeNode("CPU Timers"))

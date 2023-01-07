@@ -1,10 +1,9 @@
 ﻿#include "Entity.h"
-
+#include <xstring>
 #include <utility>
 
-void GameEngine::Entity::_Start(Renderer* renderer)
+void GameEngine::Entity::_Start()
 {
-    m_Renderer = renderer;
     Start();
 }
 
@@ -86,13 +85,12 @@ std::string GameEngine::Object::GetModel()
     return m_ModelPath;
 }
 
-void GameEngine::Object::_Start(Renderer* renderer, std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects)
+void GameEngine::Object::_Start(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects)
 {
     if (m_IsInit) return;
     
     m_Objects = std::move(objects);
     m_IsInit = true;
-    m_Renderer = renderer;
     Start();
 }
 
@@ -122,7 +120,7 @@ void GameEngine::Object::Start()
 
 void GameEngine::Object::Update()
 {
-    if (m_Renderer->RenderSize.x >= 1 && m_Renderer->RenderSize.y >= 1)
+    if (Renderer::RenderSize.x >= 1 && Renderer::RenderSize.y >= 1)
     {
         m_Shader.Use();
 

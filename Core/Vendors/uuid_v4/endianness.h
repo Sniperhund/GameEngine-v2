@@ -5,31 +5,31 @@
 #elif defined(__APPLE__) && defined(__MACH__)
   #include <machine/endian.h>
 #elif defined(BSD) || defined(_SYSTYPE_BSD)
-#if defined(__OpenBSD__)
+  #if defined(__OpenBSD__)
     #include <machine/endian.h>
-#else
+  #else
     #include <sys/endian.h>
-#endif
+  #endif
 #endif
 
 #if defined(__BYTE_ORDER)
-#if defined(__BIG_ENDIAN) && (__BYTE_ORDER == __BIG_ENDIAN)
+  #if defined(__BIG_ENDIAN) && (__BYTE_ORDER == __BIG_ENDIAN)
     #define BIGENDIAN
-#elif defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN)
+  #elif defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN)
     #define LITTLEENDIAN
-#endif
+  #endif
 #elif defined(_BYTE_ORDER)
-#if defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
+  #if defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
     #define BIGENDIAN
-#elif defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+  #elif defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
     #define LITTLEENDIAN
-#endif
+  #endif
 #elif defined(__BIG_ENDIAN__)
   #define BIGENDIAN
 #elif defined(__LITTLE_ENDIAN__)
   #define LITTLEENDIAN
 #else
-#if defined(__ARMEL__) || \
+  #if defined(__ARMEL__) || \
       defined(__THUMBEL__) || \
       defined(__AARCH64EL__) || \
       defined(_MIPSEL) || \
@@ -50,8 +50,8 @@
       defined(__bfin__) || defined(__BFIN__) || \
       defined(bfin) || defined(BFIN)
 
-#define LITTLEENDIAN
-#elif defined(__m68k__) || defined(M68000) || \
+      #define LITTLEENDIAN
+  #elif defined(__m68k__) || defined(M68000) || \
         defined(__hppa__) || defined(__hppa) || defined(__HPPA__) || \
         defined(__sparc__) || defined(__sparc) || \
         defined(__370__) || defined(__THW_370__) || \
@@ -60,53 +60,53 @@
 
       #define BIGENDIAN
 
-#elif defined(__arm__) || defined(__arm64) || defined(__thumb__) || \
+  #elif defined(__arm__) || defined(__arm64) || defined(__thumb__) || \
         defined(__TARGET_ARCH_ARM) || defined(__TARGET_ARCH_THUMB) || \
         defined(__ARM_ARCH) || \
         defined(_M_ARM) || defined(_M_ARM64)
 
-#if defined(_WIN32) || defined(_WIN64) || \
+      #if defined(_WIN32) || defined(_WIN64) || \
           defined(__WIN32__) || defined(__TOS_WIN__) || \
           defined(__WINDOWS__)
 
         #define LITTLEENDIAN
 
-#else
+      #else
         #error "Cannot determine system endianness."
-#endif
-#endif
+      #endif
+  #endif
 #endif
 
 
 #if defined(BIGENDIAN)
-// Try to use compiler intrinsics
-#if defined(__INTEL_COMPILER) || defined(__ICC)
+  // Try to use compiler intrinsics
+  #if defined(__INTEL_COMPILER) || defined(__ICC)
     #define betole16(x) _bswap16(x)
     #define betole32(x) _bswap(x)
     #define betole64(x) _bswap64(x)
-#elif defined(__GNUC__) // GCC and CLANG
+  #elif defined(__GNUC__) // GCC and CLANG
     #define betole16(x) __builtin_bswap16(x)
     #define betole32(x) __builtin_bswap32(x)
     #define betole64(x) __builtin_bswap64(x)
-#elif defined(_MSC_VER) // MSVC
+  #elif defined(_MSC_VER) // MSVC
     #include <stdlib.h>
     #define betole16(x) _byteswap_ushort(x)
     #define betole32(x) _byteswap_ulong(x)
     #define betole64(x) _byteswap_uint64(x)
-#else
+  #else
     #define FALLBACK_SWAP
     #define betole16(x) swap_u16(x)
     #define betole32(x) swap_u32(x)
     #define betole64(x) swap_u64(x)
-#endif
+  #endif
   #define betole128(x) swap_u128(x)
   #define betole256(x) swap_u256(x)
 #else
-#define betole16(x) (x)
-#define betole32(x) (x)
-#define betole64(x) (x)
-#define betole128(x) (x)
-#define betole256(x) (x)
+  #define betole16(x) (x)
+  #define betole32(x) (x)
+  #define betole64(x) (x)
+  #define betole128(x) (x)
+  #define betole256(x) (x)
 #endif // BIGENDIAN
 
 #if defined(BIGENDIAN)
