@@ -12,11 +12,10 @@ namespace GameEngine
     protected:
         bool removePadding = false;
         ImGuiWindowFlags windowFlags;
-        Renderer* m_Renderer;
     public:
         void _Update();
 
-        void _Start(Renderer* renderer);
+        void _Start();
 
         bool active = false;
         std::string title = "Default name";

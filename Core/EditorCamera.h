@@ -73,20 +73,20 @@ namespace GameEngine
             return lookAt(Position, Position + Front, Up);
         }
 
-        void HandleInput(Renderer* renderer)
+        void HandleInput()
         {
-            int state = glfwGetMouseButton(renderer->GetWindow(), GLFW_MOUSE_BUTTON_RIGHT);
+            int state = glfwGetMouseButton(Renderer::GetWindow(), GLFW_MOUSE_BUTTON_RIGHT);
             if (state != GLFW_PRESS)
             {
-                glfwSetInputMode(renderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                glfwSetInputMode(Renderer::GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                 firstMouse = true;
                 return;
             }
 
-            glfwSetInputMode(renderer->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetInputMode(Renderer::GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
             double xpos, ypos;
-            glfwGetCursorPos(renderer->GetWindow(), &xpos, &ypos);
+            glfwGetCursorPos(Renderer::GetWindow(), &xpos, &ypos);
 
             if (firstMouse)
             {
@@ -103,22 +103,22 @@ namespace GameEngine
 
             ProcessMouseMovement(xoffset, yoffset);
 
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                 MovementSpeed = MovementSpeedFast;
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
                 MovementSpeed = MovementSpeedSlow;
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_W) == GLFW_PRESS)
-                ProcessKeyboard(FORWARD, renderer->DeltaTime);
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_S) == GLFW_PRESS)
-                ProcessKeyboard(BACKWARD, renderer->DeltaTime);
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_A) == GLFW_PRESS)
-                ProcessKeyboard(LEFT, renderer->DeltaTime);
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_D) == GLFW_PRESS)
-                ProcessKeyboard(RIGHT, renderer->DeltaTime);
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_SPACE) == GLFW_PRESS)
-                ProcessKeyboard(UP, renderer->DeltaTime);
-            if (glfwGetKey(renderer->GetWindow(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-                ProcessKeyboard(DOWN, renderer->DeltaTime);
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_W) == GLFW_PRESS)
+                ProcessKeyboard(FORWARD, Renderer::DeltaTime);
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_S) == GLFW_PRESS)
+                ProcessKeyboard(BACKWARD, Renderer::DeltaTime);
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_A) == GLFW_PRESS)
+                ProcessKeyboard(LEFT, Renderer::DeltaTime);
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_D) == GLFW_PRESS)
+                ProcessKeyboard(RIGHT, Renderer::DeltaTime);
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_SPACE) == GLFW_PRESS)
+                ProcessKeyboard(UP, Renderer::DeltaTime);
+            if (glfwGetKey(Renderer::GetWindow(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+                ProcessKeyboard(DOWN, Renderer::DeltaTime);
         }
 
         void ProcessKeyboard(Camera_Movement direction, float deltaTime)

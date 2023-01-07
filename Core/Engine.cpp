@@ -7,7 +7,7 @@
 
 #include "Util/Entity.h"
 
-GameEngine::Engine::Engine(Renderer* renderer) : m_Renderer(renderer)
+GameEngine::Engine::Engine()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -19,22 +19,13 @@ GameEngine::Engine::Engine(Renderer* renderer) : m_Renderer(renderer)
 
     SetupImGuiStyle();
 
-    ImGui_ImplGlfw_InitForOpenGL(m_Renderer->GetWindow(), true);
+    ImGui_ImplGlfw_InitForOpenGL(Renderer::GetWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
     AddLayer(m_SceneView);
     AddLayer(m_Hierarchy);
     AddLayer(m_PerformanceView);
     AddLayer(m_Properties);
-}
-
-void GameEngine::Engine::RefreshObjects()
-{
-    for (auto layer : m_Layers) { layer->_Start(m_Renderer); }
-    for (auto object : *m_Objects)
-    {
-        object->_Start(m_Renderer, m_Objects);
-    }
 }
 
 void GameEngine::Engine::AddShader(std::shared_ptr<Shader> shader)
@@ -55,13 +46,13 @@ std::shared_ptr<GameEngine::Object> GameEngine::Engine::CreateObject(std::string
 void GameEngine::Engine::AddObject(std::shared_ptr<Object> object)
 {
     m_Objects->emplace_back(std::move(object));
-    RefreshObjects();
+    object->_Start(m_Objects);
 }
 
 void GameEngine::Engine::AddLayer(UILayer* layer)
 {
     m_Layers.push_back(std::move(layer));
-    RefreshObjects();
+    layer->_Start();
 }
 
 void GameEngine::Engine::SetupImGuiStyle()
@@ -183,38 +174,42 @@ void GameEngine::Engine::StartGameLoop()
 {
     glEnable(GL_DEPTH_TEST);
 
-    m_Renderer->CreateFramebuffer();
+    Renderer::CreateFramebuffer();
 
     Camera camera;
     SetCurrentCamera(&camera);
     
-    while (!glfwWindowShouldClose(m_Renderer->GetWindow()))
+    while (!glfwWindowShouldClose(Renderer::GetWindow()))
     {
         Timer timer;
 
-        m_Renderer->UpdateDeltaTime();
-        camera.HandleInput(m_Renderer);
-        if (m_Renderer->RenderSize.x >= 1 && m_Renderer->RenderSize.y >= 1)
+        auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "Framebuffer not complete: " << fboStatus << std::endl;
+        
+        Renderer::UpdateDeltaTime();
+        camera.HandleInput();
+        if (Renderer::RenderSize.x >= 1 && Renderer::RenderSize.y >= 1)
         {
-            m_Renderer->Projection = glm::perspective(glm::radians(m_CurrentCamera->Fov),
-                                                      m_Renderer->RenderSize.x / m_Renderer->RenderSize.y, 0.1f,
+            Renderer::Projection = glm::perspective(glm::radians(m_CurrentCamera->Fov),
+                                                      Renderer::RenderSize.x / Renderer::RenderSize.y, 0.1f,
                                                       100.0f);
-            m_Renderer->View = m_CurrentCamera->GetViewMatrix();
+            Renderer::View = m_CurrentCamera->GetViewMatrix();
         }
         glfwPollEvents();
 
-        m_Renderer->Bind(); // Bind the framebuffer
+        Renderer::Bind(); // Bind the framebuffer
         for (int i = 0; i < m_GameLoops.size(); i++) { m_GameLoops[i](); }
         for (int i = 0; i < m_Objects->size(); i++) { m_Objects->at(i)->_Update(m_CurrentCamera); }
-        m_Renderer->Unbind(); // Unbind and set the framebuffer
+        Renderer::Unbind(); // Unbind and set the framebuffer
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         UpdateImGui(); // Update the ImGui Context and show the framebuffer
+        
+        glfwSwapBuffers(Renderer::GetWindow());
 
-        glfwSwapBuffers(m_Renderer->GetWindow());
-
-        m_Renderer->RenderTimeInMs = timer.ElapsedMillis();
+        Renderer::RenderTimeInMs = timer.ElapsedMillis();
     }
 }
 
@@ -223,7 +218,7 @@ void GameEngine::Engine::UpdateShaders()
     for (int i = 0; i < m_Shaders.size(); i++)
     {
         m_Shaders.at(i)->Use();
-        m_Shaders.at(i)->SetMat4("projection", m_Renderer->Projection);
-        m_Shaders.at(i)->SetMat4("view", m_Renderer->View);
+        m_Shaders.at(i)->SetMat4("projection", Renderer::Projection);
+        m_Shaders.at(i)->SetMat4("view", Renderer::View);
     }
 }

@@ -18,11 +18,10 @@ namespace GameEngine
         glm::vec3 m_Position = glm::vec3(0);
         glm::vec3 m_Scale = glm::vec3(0);
         glm::vec3 m_Rotation = glm::vec3(0);
-
-        Renderer* m_Renderer;
+        
         Camera* m_CurrentCamera;
     public:
-        virtual void _Start(Renderer* renderer);
+        virtual void _Start();
 
         virtual void _Update(Camera* currentCamera);
 
@@ -46,8 +45,7 @@ namespace GameEngine
         glm::vec3 m_Scale = glm::vec3(1);
         glm::vec3 m_Rotation = glm::vec3(0);
         glm::vec4 m_Color = glm::vec4(0);
-
-        Renderer* m_Renderer = nullptr;
+        
         Camera* m_CurrentCamera = nullptr;
         std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects;
         std::string m_Name = "Default Name";
@@ -69,7 +67,7 @@ namespace GameEngine
         std::string GetShader();
         std::string GetModel();
 
-        void _Start(Renderer* renderer, std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects);
+        void _Start(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects);
         void _Update(Camera* currentCamera);
 
         virtual void SetInfo(std::string shaderPath, std::string modelPath);
