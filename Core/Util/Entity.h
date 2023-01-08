@@ -5,10 +5,8 @@
 
 #include "../Vendors/uuid_v4/uuid_v4.h"
 
-#include "../EditorCamera.h"
 #include "../Graphics/Shader.h"
 #include "../Graphics/Model.h"
-#include "../Graphics/Renderer.h"
 
 namespace GameEngine
 {
@@ -18,12 +16,10 @@ namespace GameEngine
         glm::vec3 m_Position = glm::vec3(0);
         glm::vec3 m_Scale = glm::vec3(0);
         glm::vec3 m_Rotation = glm::vec3(0);
-        
-        Camera* m_CurrentCamera;
     public:
         virtual void _Start();
 
-        virtual void _Update(Camera* currentCamera);
+        virtual void _Update();
 
         virtual void Start() {}
 
@@ -46,8 +42,6 @@ namespace GameEngine
         glm::vec3 m_Rotation = glm::vec3(0);
         glm::vec4 m_Color = glm::vec4(0);
         
-        Camera* m_CurrentCamera = nullptr;
-        std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects;
         std::string m_Name = "Default Name";
         UUIDv4::UUID m_uuid = UUIDv4::UUIDGenerator<std::mt19937>().getUUID();
     public:
@@ -57,6 +51,7 @@ namespace GameEngine
         void SetColor(glm::vec4 color);
         void SetName(std::string name);
         void SetShader(std::string shader);
+        void SetModel(std::string modelName);
 
         glm::vec3 GetPosition();
         glm::vec3 GetRotation();
@@ -67,8 +62,8 @@ namespace GameEngine
         std::string GetShader();
         std::string GetModel();
 
-        void _Start(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects);
-        void _Update(Camera* currentCamera);
+        void _Start();
+        void _Update();
 
         virtual void SetInfo(std::string shaderPath, std::string modelPath);
 

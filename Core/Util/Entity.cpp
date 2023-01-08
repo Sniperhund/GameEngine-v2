@@ -1,15 +1,15 @@
 ﻿#include "Entity.h"
 #include <xstring>
-#include <utility>
+
+#include "../Graphics/Renderer.h"
 
 void GameEngine::Entity::_Start()
 {
     Start();
 }
 
-void GameEngine::Entity::_Update(Camera* currentCamera)
+void GameEngine::Entity::_Update()
 {
-    m_CurrentCamera = currentCamera;
     Update();
 }
 
@@ -43,6 +43,12 @@ void GameEngine::Object::SetShader(std::string shader)
     m_ShaderPath = shader;
     m_Shader.Init(std::format("{}.vert", m_ShaderPath).c_str(),
                   std::format("{}.frag", m_ShaderPath).c_str());
+}
+
+void GameEngine::Object::SetModel(std::string modelName)
+{
+    m_ModelPath = modelName;
+    m_Model.Init(m_ModelPath);
 }
 
 glm::vec3 GameEngine::Object::GetPosition()
@@ -85,25 +91,23 @@ std::string GameEngine::Object::GetModel()
     return m_ModelPath;
 }
 
-void GameEngine::Object::_Start(std::shared_ptr<std::vector<std::shared_ptr<Object>>> objects)
+void GameEngine::Object::_Start()
 {
     if (m_IsInit) return;
     
-    m_Objects = std::move(objects);
     m_IsInit = true;
     Start();
 }
 
-void GameEngine::Object::_Update(Camera* currentCamera)
+void GameEngine::Object::_Update()
 {
-    m_CurrentCamera = currentCamera;
     Update();
 }
 
 void GameEngine::Object::SetInfo(std::string shaderPath, std::string modelPath)
 {
-    m_ShaderPath = shaderPath;
-    m_ModelPath = modelPath;
+    SetShader(shaderPath);
+    SetModel(modelPath);
 }
 
 void GameEngine::Object::Start()
@@ -112,10 +116,6 @@ void GameEngine::Object::Start()
     {
         DebugError("Something went wrong. Somehow someone forgot to set the model path or shader path");
     }
-
-    m_Shader.Init(std::format("{}.vert", m_ShaderPath).c_str(), std::format("{}.frag", m_ShaderPath).c_str());
-    m_Model.Init(m_ModelPath);
-    
 }
 
 void GameEngine::Object::Update()
@@ -123,6 +123,9 @@ void GameEngine::Object::Update()
     if (Renderer::RenderSize.x >= 1 && Renderer::RenderSize.y >= 1)
     {
         m_Shader.Use();
+
+        m_Shader.SetMat4("projection", Renderer::Projection);
+        m_Shader.SetMat4("view", Renderer::View);
 
         auto model = glm::mat4(1.0f);
         model = translate(model, m_Position);

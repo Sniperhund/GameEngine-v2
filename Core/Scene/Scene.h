@@ -1,7 +1,16 @@
 ﻿#pragma once
+#include <memory>
+#include <vector>
 
-class Scene
+#include "../Util/Entity.h"
+
+namespace GameEngine
 {
-public:
+    class Scene
+    {
+        static std::shared_ptr<std::vector<std::shared_ptr<Object>>> m_Objects;
+    public:
     
-};
+    };
+
+}
