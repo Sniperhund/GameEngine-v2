@@ -1,0 +1,9 @@
+x86
+Core/x86
+GameEngine/x86
+
+x64
+Core/x64
+GameEngine/x64
+
+.idea
